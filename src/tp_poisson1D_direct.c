@@ -4,6 +4,7 @@
 /* to solve the Poisson 1D problem        */
 /******************************************/
 #include "lib_poisson1D.h"
+#include "time.h"
 
 #define TRF 0
 #define TRI 1
@@ -18,7 +19,7 @@ int main(int argc,char *argv[])
   int nbpoints, la;
   int ku, kl, kv, lab;
   int *ipiv;
-  int info = 1;
+  double info = 1;
   int NRHS;
   int IMPLEM = 0;
   double T0, T1;
@@ -88,9 +89,19 @@ int main(int argc,char *argv[])
     }
   }
 
+/*Exercice 5*/
   /* It can also be solved with dgbsv */
   if (IMPLEM == SV) {
     // TODO : use dgbsv
+
+    clock_t start, end;
+    double time_used;
+    start = clock();
+    dgbsv_(&la,&kl,&ku,&NRHS,AB,&lab,ipiv,RHS,&la,&info);
+    end = clock();
+
+    time_used = ((double)(end-start))/CLOCKS_PER_SEC;
+    printf("Time used = %f seconds\n",time_used);
   }
 
   write_GB_operator_colMajor_poisson1D(AB, &lab, &la, "LU.dat");

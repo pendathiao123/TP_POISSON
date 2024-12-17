@@ -3,7 +3,7 @@
 /* Numerical library developed to solve 1D    */ 
 /* Poisson problem (Heat equation)            */
 /**********************************************/
-#include "lib_poisson1D.h"
+#include "../include/lib_poisson1D.h"
 
 void eig_poisson1D(double* eigval, int *la){
 }
