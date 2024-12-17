@@ -17,6 +17,7 @@
 HOSTNAME?=$(shell hostname)
 include $(HOSTNAME).mk
 
+
 # 
 # -- Compiler Option
 OPTC=${OPTCLOCAL}
@@ -28,7 +29,7 @@ TPDIRSRC=$(TPDIR)/src
 
 #
 # -- librairies
-LIBS=${LIBSLOCAL}
+LIBS=${LIBSLOCAL} -llapacke -llapack -lblas -lm
 
 # -- Include directories
 INCLATLAS=${INCLUDEBLASLOCAL}
@@ -83,5 +84,9 @@ run_tpPoisson1D_direct:
 
 clean:
 	rm *.o bin/*
+
+doc:
+	docker build . -f docker/Dockerfile -t poisson
+	docker run -ti --rm -v .:/app poisson
 
 #include Docker.mk

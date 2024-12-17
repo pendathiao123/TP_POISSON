@@ -3,7 +3,7 @@
 /* Numerical library developed to solve 1D    */ 
 /* Poisson problem (Heat equation)            */
 /**********************************************/
-#include "lib_poisson1D.h"
+#include "../include/lib_poisson1D.h"
 
 void write_GB_operator_rowMajor_poisson1D(double* AB, int* lab, int* la, char* filename){
   FILE * file;
