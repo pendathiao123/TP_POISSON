@@ -45,18 +45,12 @@ void set_dense_RHS_DBC_1D(double* RHS, int* la, double* BC0, double* BC1){
 }  
 
 void set_analytical_solution_DBC_1D(double* EX_SOL, double* X, int* la, double* BC0, double* BC1){
-    //EX_SOL = *BC0 + (*BC1-*BC0)*X/L
+    //EX_SOL = *BC0 + (*BC1-*BC0)*X
     
-    // Calcul de la longueur du domaine
-    double L = X[*la - 1] - X[0];
-    if (L <= 0.0) {
-        fprintf(stderr, "Erreur : Longueur du domaine (L) invalide : %f\n", L);
-        return;
-    }
 
-    // Calcul de la solution analytique
-    for (int i = 0; i < *la; i++) {
-        EX_SOL[i] = (*BC0) + ((*BC1) - (*BC0)) * (X[i] - X[0]) / L;
+    for (int i = 0; i < *la; i++) 
+    {
+        EX_SOL[i] = X[i] * ((*BC1)- (*BC0)) + (*BC0);
     }
     
 }  
@@ -92,31 +86,40 @@ int indexABCol(int i, int j, int *lab){
 
 //Exercice6
 int dgbtrftridiag(int *la, int*n, int *kl, int *ku, double *AB, int *lab, int *ipiv, int *info){
-    int i, j;
+    int i, k;
     double factor;
-    int N = *n;
-    int KL = *kl;
-    int KU = *ku;
-    int LAB = *lab;
+    
+    // Vérification des paramètres
+    if (*lab != 4 || *kl != 1 || *ku != 1 || *la < *n) {
+        *info = -1;
+        return *info;
+    }
 
-    for (i = 0; i < N; i++) {
-        ipiv[i] = i + 1; // On suppose pas de permutation initialement
+    *info = 0;
+
+    // Initialisation du tableau des pivots
+    for (i = 0; i < *n; i++) {
+        ipiv[i] = i + 1; // Pas de permutation initialement
     }
+
     // Factorisation LU
-    for (i = 0; i < N - 1; i++) {
-        // La pivotisation se fait sur l'élément de la diagonale principale
-        if (AB[i + LAB] == 0.0) {
-            *info = i + 1;
-            return *info; // Pivot nul
+    for (k = 0; k < *n - 1; k++) {
+        // Vérification du pivot (diagonale principale)
+        if (fabs(AB[2 + k * (*lab)]) < 1e-10) { // Pivot nul
+            *info = k + 1;
+            return *info;
         }
-        // Calcul du facteur de pivot
-        factor = AB[i + LAB + 1] / AB[i + LAB];
-        // Mettre à jour la sous-diagonale
-        AB[i + LAB + 1] = factor;
-        // Mettre à jour la diagonale supérieure
-        AB[i + LAB + 2] -= factor * AB[i + LAB + 1];
-        // La diagonale inférieure ne change pas
+
+        // Calcul du facteur de pivot (sous-diagonale / diagonale principale)
+        factor = AB[3 + k * (*lab)] / AB[2 + k * (*lab)];
+
+        // Mise à jour de la sous-diagonale (elle contient désormais le facteur)
+        AB[3 + k * (*lab)] = factor;
+
+        // Mise à jour de la diagonale principale suivante
+        AB[2 + (k + 1) * (*lab)] -= factor * AB[1 + k * (*lab)];
     }
-    *info = 0; // Factorisation réussie
+
     return *info;
+    
 }
