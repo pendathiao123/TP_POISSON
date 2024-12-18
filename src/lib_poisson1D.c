@@ -6,24 +6,32 @@
 #include "../include/lib_poisson1D.h"
 
 void set_GB_operator_colMajor_poisson1D(double* AB, int *lab, int *la, int *kv){
-    int diagonals = *la; // Nombre de diagonales
-    int cols = *lab;     // Nombre de colonnes 
+if ((*kv)!=0){
+  for (int i =0 ; i< (*la) ; i++ ){
+    AB[i*(*lab)]  = 0;  
 
-    //Ligne 0, que des zéros
-    // Ligne 1 : Diagonale supérieure (-1)
-    for (int j = 1; j < cols; j++) {
-        AB[1 * cols + j] = -1.0;
-    }
+  }
+  }
 
-    // Ligne 2 : Diagonale principale (2)
-    for (int j = 0; j < cols; j++) {
-        AB[2 * cols + j] = 2.0;
-    }
+  for (int i =0; i< (*la) ; i++ ){
+    AB[i*(*lab)+1] =-1; 
 
-    // Ligne 3 : Diagonale inférieure (-1)
-    for (int j = 0; j < cols - 1; j++) {
-        AB[3 * cols + j] = -1.0;
-    }
+  }
+  AB[(*kv)] =0 ; 
+  // AB[(*la) ] =0 ; 
+
+  for (int i =0 ; i< (*la) ; i++ ){
+    AB[i*(*lab)+2] =2; 
+
+  }
+
+  for (int i =0 /*derniere ligne remplie de -1*/ ; i< (*la)  ; i++ ){
+    AB[i*(*lab)+3] =-1; 
+  }
+
+  // AB[(*la)*(*kv)+3*(*la)] =0; 
+  int last_element = (*lab ) * (*la) -1; 
+  AB[last_element] =0; 
 }
 
 
@@ -47,10 +55,12 @@ void set_dense_RHS_DBC_1D(double* RHS, int* la, double* BC0, double* BC1){
 void set_analytical_solution_DBC_1D(double* EX_SOL, double* X, int* la, double* BC0, double* BC1){
     //EX_SOL = *BC0 + (*BC1-*BC0)*X
     
-
-    for (int i = 0; i < *la; i++) 
+    int i;
+    double T0 = *BC0;
+    double T1 = *BC1;
+    for (i = 0; i < *la; i++) 
     {
-        EX_SOL[i] = X[i] * ((*BC1)- (*BC0)) + (*BC0);
+        EX_SOL[i] = X[i] * (T1 - T0) + T0;
     }
     
 }  

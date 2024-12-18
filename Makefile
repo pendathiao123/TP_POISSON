@@ -64,7 +64,7 @@ bin/tp_testenv: $(OBJENV)
 	$(CC) -o bin/tp_testenv $(OPTC) $(OBJENV) $(LIBS)
 
 bin/tpPoisson1D_iter: $(OBJTP2ITER)
-	$(CC) -o bin/tpPoisson1D_iter $(OPTC) $(OBJTP2ITER) $(LIBS)
+	$(CC) -o bin/tpPoisson1D_iter $(OPTC) $(OBJTP2ITER) $(LIBS) 
 
 bin/tpPoisson1D_direct: $(OBJTP2DIRECT)
 	$(CC) -o bin/tpPoisson1D_direct $(OPTC) $(OBJTP2DIRECT) $(LIBS)
