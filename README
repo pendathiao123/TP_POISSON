@@ -37,3 +37,9 @@ Here:
 $ make run_testenv
 $ make run_tpPoisson1D_iter
 $ make run_tpPoisson1D_direct
+
+- Pour lancer docker tapez la commande suivant:
+$ make doc
+
+-Ensuite pour lancer le programme tapez
+$ make run 
